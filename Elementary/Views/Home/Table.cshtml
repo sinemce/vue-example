@@ -1,0 +1,203 @@
+﻿
+@{
+    ViewBag.Title = "Table";
+}
+
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-12">
+        <h2>Table</h2>
+    </div>
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div id="basicTable">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <div id="divTable">
+                        <template>
+                            <v-table class="table table-striped table-bordered table-hover"
+                                     :data="items"
+                                     :columns="columns"
+                                     :sortKey="sortKey"
+                                     :reverse="reverse"
+                                     :select="select">
+                            </v-table>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/x-template" id="table-template">
+
+    @*<select v-model="select.selected">
+            <option v-for="option in select.options" v-bind:value="option.value" v-on:click="alert(option.value)">
+                {{ option.text }} -  {{ option.value }}
+            </option>
+        </select>
+        <span>Selected: {{ select.selected }}</span>
+        <button class="btn btn-outline-warning btn-xs"
+                v-on:click="rowEdit()">
+            Edit
+        </button>*@
+
+    <table>
+        <thead>
+            <tr>
+                <th>
+                </th>
+                <th v-for="column in columns">
+                    <a href="#"
+                       v-on: click="sortBy(column)">
+                        {{ column }}
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+
+            <tr v-for="item in data " v-bind:id="item.id">
+                <td v-on: click="openRowDetail(item.id)" style="width:30px">
+                    <i class="fa fa-chevron-right"></i>
+                </td>
+                <td v-for="column in columns">
+                    {{ item[column] }}
+                </td>
+            </tr>
+
+
+        </tbody>
+    </table>
+</script>
+
+
+<script type="text/x-template" id="modal-template">
+    <transition name="modal">
+        <div class="modal-mask">
+            <div class="modal-wrapper">
+                <div class="modal-container">
+                    <div class="modal-header">
+                        <slot name="header">
+                            default header
+                        </slot>
+                    </div>
+
+                    <div class="modal-body">
+                        <slot name="body">
+                            default body
+                        </slot>
+                    </div>
+
+                    <div class="modal-footer">
+                        <slot name="footer">
+                            default footer
+                            <button class="modal-default-button" v-on:click="$emit('close')">
+                                OK
+                            </button>
+                        </slot>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </transition>
+</script>
+
+
+
+<script type="text/javascript">
+
+    // Table
+    Vue.component('v-table', {
+        template: '#table-template',
+        props: {
+            data: Array,
+            columns: Array,
+            sortKey: String,
+            reverse: Boolean,
+            select: Array,
+            opened: []
+        },
+        methods: {
+            sortBy: function (sortKey) {
+                this.reverse = (this.sortKey == sortKey) ? !this.reverse : false;
+                this.sortKey = sortKey;
+            },
+            rowEdit: function (item) {
+
+            },
+            openRowDetail(id) {
+                alert(id);
+                const index = this.opened.indexOf(id);
+                if (index > -1) {
+                    this.opened.splice(index, 1)
+                } else {
+                    this.opened.push(id)
+                }
+            }
+
+        },
+    })
+
+
+    // Modal
+    Vue.component('v-modal', {
+        template: '#modal-template'
+    })
+
+    var JsonData = @Html.Raw(ViewBag.JsonData);
+
+    var divTable = new Vue({
+        el: '#divTable',
+        data: {
+            items: JsonData,
+            columns: _.keys(JsonData[0]),
+            sortKey: "id",
+            reverse: false,
+            select: {
+                selected: 'A',
+                options: [
+                    { text: 'One', value: 'A' },
+                    { text: 'Two', value: 'B' },
+                    { text: 'Three', value: 'C' }
+                ]
+            },
+            opened: [],
+        },
+        methods: {
+            openRowDetail(id) {
+                alert(id);
+                const index = this.opened.indexOf(id);
+                if (index > -1) {
+                    this.opened.splice(index, 1)
+                } else {
+                    this.opened.push(id)
+                }
+            }
+        }
+    })
+
+
+
+
+</script>

@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewBag.Title = "BindClass";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-12">
+        <h2>Bind Class</h2>
+    </div>
+</div>
+
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+
+                    <div class="static" v-bind:class="{ active: isActive, 'text-danger': hasError }">
+                        isActive : {{isActive}} <br />
+                        hasError : {{hasError}}
+                    </div>
+
+                    <hr />
+
+                    <div class="static2" v-bind:class="[isActive ? activeClass : '', errorClass]">
+                        isActive : {{isActive}} <br />
+                        activeClass : {{activeClass}} <br />
+                        errorClass : {{errorClass}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var app = new Vue({
+        el: '.static',
+        data: {
+            isActive: true,
+            hasError: false
+        }
+    });
+
+
+    var app = new Vue({
+        el: '.static2',
+        data: {
+            isActive: false,
+            activeClass: 'active',
+            errorClass: 'text-danger'
+        }
+    });
+
+
+
+</script>

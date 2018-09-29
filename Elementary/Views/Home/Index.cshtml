@@ -1,0 +1,218 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-lg-12">
+        <h2>Index</h2>
+    </div>
+</div>
+
+
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-content">
+
+
+                    <div id="vHome">
+                        {{message}}
+                    </div>
+                    <hr />
+
+                    <div id="vName">
+                        Name: {{fname}} <br />
+                        LastName: {{lname}} <br /><br />
+                        <div v-html="htmlcontent"></div>
+                    </div>
+
+                    <div id="vComponent">
+                        <testcomponent></testcomponent>
+                    </div>
+
+                    <div id="vComponent_test">
+                        <testcomponent1></testcomponent1>
+                    </div>
+
+                    <hr />
+
+                    <div id="vComputed_props">
+                        FirstName : <input type="text" v-model="firstname" /> <br /><br />
+                        LastName : <input type="text" v-model="lastname" /> <br /><br />
+                        <h6>My name is {{ firstname }} {{ lastname }}</h6>
+                        <h6>Computed Method : {{ getfullname }}</h6>
+                    </div>
+
+                    <hr />
+
+                    <div id="app-6">
+                        <p>{{ message }}</p>
+                        <input v-model="message">
+                    </div>
+
+                    <hr />
+
+                    <div id="app-7">
+                        <ul>
+                            <todo-item v-for="item in groceryList"
+                                       v-bind:todo="item"
+                                       v-bind:key="item.text">
+                            </todo-item>
+                        </ul>
+                    </div>
+
+                    <hr />
+
+                    <div id="example">
+                        <p>Original message: "{{ message }}"</p>
+                        <p>Computed reversed message: "{{ reversedMessage }}"</p>
+                    </div>
+
+                    <hr />
+
+                    <div id="watch-example">
+                        <p>
+                            Ask a yes/no question:<br />
+                            <input v-model="question">
+                        </p>
+                        <p>{{ answer }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+    var app = new Vue({
+        el: '#vHome',
+        data: {
+            message: 'Hello !'
+        }
+    });
+
+    //-----------------------------------
+    var _obj = {
+        fname: "first",
+        lname: "last",
+        htmlcontent: "<div><h5>html content</h5></div>"
+    };
+    var vm = new Vue({
+        el: '#vName',
+        data: _obj
+    })
+
+    //-----------------------------------
+
+    Vue.component('testcomponent', {
+        template: '<div><h3>testcomponent</h3></div>'
+    });
+    var vm = new Vue({
+        el: '#vComponent'
+    });
+
+    //-----------------------------------
+
+    var vm = new Vue({
+        el: '#vComponent_test',
+        components: {
+            'testcomponent1': {
+                template: '<div><h4>testcomponent 1</h4></div>'
+            }
+        }
+    });
+
+    //-----------------------------------
+
+    var vm = new Vue({
+        el: '#vComputed_props',
+        data: {
+            firstname: "",
+            lastname: "",
+            birthyear: ""
+        },
+        computed: {
+            getfullname: function () {
+                return this.firstname + " " + this.lastname;
+            }
+        }
+    })
+
+    //-----------------------------------
+    var app6 = new Vue({
+        el: '#app-6',
+        data: {
+            message: 'Hello!'
+        }
+    })
+
+
+    //-----------------------------------
+    Vue.component('todo-item', {
+        // The todo-item component now accepts a
+        // "prop", which is like a custom attribute.
+        // This prop is called todo.
+        props: ['todo'],
+        template: '<li>{{ todo.id }} - {{ todo.text }}</li>'
+    })
+
+    var app7 = new Vue({
+        el: '#app-7',
+        data: {
+            groceryList: [
+                { id: 0, text: 'Vegetables' },
+                { id: 1, text: 'Cheese' },
+                { id: 2, text: 'Whatever else humans are supposed to eat' }
+            ]
+        }
+    })
+
+    //-----------------------------------
+    var watchExampleVM = new Vue({
+        el: '#watch-example',
+        data: {
+            question: '',
+            answer: 'I cannot give you an answer until you ask a question!'
+        },
+        watch: {
+            // whenever question changes, this function will run
+            question: function (newQuestion, oldQuestion) {
+                this.answer = 'Waiting for you to stop typing...'
+                this.debouncedGetAnswer()
+            }
+        },
+        created: function () {
+            // _.debounce is a function provided by lodash to limit how
+            // often a particularly expensive operation can be run.
+            // In this case, we want to limit how often we access
+            // yesno.wtf/api, waiting until the user has completely
+            // finished typing before making the ajax request. To learn
+            // more about the _.debounce function (and its cousin
+            // _.throttle), visit: https://lodash.com/docs#debounce
+
+            this.debouncedGetAnswer = _.debounce(this.getAnswer, 500)
+        },
+        methods: {
+            getAnswer: function () {
+                if (this.question.indexOf('?') === -1) {
+                    this.answer = 'Questions usually contain a question mark. ;-)'
+                    return
+                }
+                this.answer = 'Thinking...'
+                var vm = this
+                axios.get('https://yesno.wtf/api')
+                    .then(function (response) {
+                        vm.answer = _.capitalize(response.data.answer)
+                    })
+                    .catch(function (error) {
+                        vm.answer = 'Error! Could not reach the API. ' + error
+                    })
+            }
+        }
+    })
+
+</script>

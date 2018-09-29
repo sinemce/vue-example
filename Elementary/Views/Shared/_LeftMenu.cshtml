@@ -1,0 +1,86 @@
+﻿
+<nav class="navbar-default navbar-static-side" role="navigation">
+    <div class="sidebar-collapse">
+        <div id="side-menu">
+            <template>
+                <vue-tree-navigation :items="items" :defaultOpenLevel="defaultOpenLevel" />
+            </template>
+        </div>
+    </div>
+</nav>
+
+<script type="text/javascript">
+    Vue.use(VueTreeNavigation);
+
+    var menu = new Vue({
+        el: '#side-menu',
+        data: {
+            items: [
+                {
+                    name: 'Home',
+                    route: 'Home',
+                    children: [
+                        {
+                            name: 'BindClass',
+                            route: 'BindClass',
+                            children: [
+                                { name: 'Race', element: 'race' },
+                                { name: 'Road', element: 'road' },
+                                { name: 'Trail', element: 'trail' },
+                            ],
+                        },
+                        {
+                            name: 'Conditional',
+                            route: 'Conditional',
+                            children: [
+                                { name: 'Jackets', route: 'jackets' },
+                                {
+                                    name: 'Tops',
+                                    route: 'tops',
+                                    children: [
+                                        {
+                                            name: 'Long Sleeve',
+                                            element: 'long-sleeve',
+                                            children: [
+                                                { name: 'For summer', element: 'summer' },
+                                                { name: 'For winter', element: 'winter' },
+                                            ],
+                                        },
+                                        { name: 'Short Sleeve', element: 'short-sleeve' },
+                                        { name: 'Sleeveless', element: 'sleeveless' },
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            name: 'List',
+                            route: 'List'
+                        },
+                    ],
+                }
+            ],
+            defaultOpenLevel: 2,
+        }
+    });
+</script>
+
+
+<style>
+
+    .TreeNavigation {
+        width: 100% !important;
+    }
+
+        .TreeNavigation li {
+            padding: 4px 10px 4px 20px;
+        }
+
+    /*.NavigationToggle {
+        float: right !important;
+    }*/
+
+    .NavigationItem__link {
+        color: #fff !important;
+    }
+</style>
+
